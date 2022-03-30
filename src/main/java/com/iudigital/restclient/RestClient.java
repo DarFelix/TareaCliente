@@ -1,17 +1,23 @@
 package com.iudigital.restclient;
 
-import java.util.Arrays;
+//import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
+import org.springframework.core.ParameterizedTypeReference;
+//import org.springframework.http.HttpEntity;
+//import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+//import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.iudigital.restclient.entity.User;
 
 
@@ -37,7 +43,7 @@ public class RestClient {
 		Scanner sc = new Scanner(System.in);
 		Scanner tecla = new Scanner(System.in);
 		
-		System.out.println("Seleccione una de las siguientes opciones:");
+		System.out.println("Seleccione una de las siguientes opciones para un usuario:");
 		System.out.println("1. Consultar");
 		System.out.println("2. Guardar");
 		System.out.println("3. Modificar");
@@ -76,15 +82,24 @@ public class RestClient {
 	
 	private static void callGetUsers() {
 		
+		ResponseEntity<List<User>> response = restTemplate.exchange(
+		GET_ALL_USERS,
+		  HttpMethod.GET,
+		  null,
+		  new ParameterizedTypeReference<List<User>>(){});
+		List<User> users = response.getBody();	
 		
-		HttpHeaders headers = new HttpHeaders();
-		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		String json = new Gson().toJson(users );
 		
-		HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
-				
-		ResponseEntity<String> result = restTemplate.exchange(GET_ALL_USERS, HttpMethod.GET, entity, String.class);
+		JsonParser parser = new JsonParser();
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+		JsonElement el = parser.parse(json);
+		String jsonString = gson.toJson(el);
+		
 		System.out.println("Los usuarios registrados son:");
-		System.out.println(result);
+		
+		System.out.println(jsonString);
 		
 	}
 	
@@ -114,6 +129,8 @@ public class RestClient {
 		System.out.println("Ciudad: "+user.getCiudad());
 		System.out.println("Foto: "+user.getFoto());
 		System.out.println("Reporte: "+user.isReporte());
+		System.out.println("Password: "+user.getPass());
+		System.out.println("Rol: "+user.getRol());
 		System.out.println("----------------------");
 		
 	}
@@ -133,6 +150,9 @@ public class RestClient {
 		Scanner ciu = new Scanner(System.in);
 		Scanner fot = new Scanner(System.in);
 		Scanner rep = new Scanner(System.in);
+		Scanner contr = new Scanner(System.in);
+		Scanner idr = new Scanner(System.in);
+		
 		
 		System.out.println("Digite la cédula: ");
         String cedula = nm.nextLine();
@@ -183,6 +203,16 @@ public class RestClient {
         boolean reporte = rep.nextBoolean();
         System.out.println("El reporte es: " + reporte);
         System.out.println("--------------- ");
+        
+        System.out.println("Ingrese la clave: ");
+        String pass = contr.nextLine();
+        System.out.println("La clave es: " + pass);
+        System.out.println("--------------- ");
+        
+        System.out.println("Ingrese el rol: ");
+        String rol = idr.nextLine();
+        System.out.println("El rol es: " + rol);
+        System.out.println("--------------- ");
 		
 		
 		user.setCedula(cedula);
@@ -195,13 +225,13 @@ public class RestClient {
 		user.setCiudad(ciudad);
 		user.setFoto(url);
 		user.setReporte(reporte);
-		
+		user.setPass(pass);
+		user.setRol(rol);
 		
 		ResponseEntity<User> user2= restTemplate.postForEntity(CREATE_USER, user, User.class);
 		
 		System.out.println(user2.getBody());
 		System.out.println("Usuario guardado con éxito");
-		
 		
 		
 	}
@@ -229,6 +259,8 @@ public class RestClient {
 			Scanner ciu = new Scanner(System.in);
 			Scanner fot = new Scanner(System.in);
 			Scanner rep = new Scanner(System.in);
+			Scanner pas = new Scanner(System.in);
+			Scanner idr = new Scanner(System.in);
 			
 			System.out.println("Digite la cédula: ");
 	        String cedula = nm.nextLine();
@@ -279,6 +311,16 @@ public class RestClient {
 	        boolean reporte = rep.nextBoolean();
 	        System.out.println("El reporte es: " + reporte);
 	        System.out.println("--------------- ");
+	        
+	        System.out.println("Ingrese la contraseña: ");
+	        String contr = pas.nextLine();
+	        System.out.println("La clave es: " + contr);
+	        System.out.println("--------------- ");
+	        
+	        System.out.println("Ingrese el rol del usuario ");
+	        String rol = idr.nextLine();
+	        System.out.println("La rol es: " + rol);
+	        System.out.println("--------------- ");
 			
 			
 			updatedUser.setCedula(cedula);
@@ -291,6 +333,8 @@ public class RestClient {
 			updatedUser.setCiudad(ciudad);
 			updatedUser.setFoto(url);
 			updatedUser.setReporte(reporte);
+			updatedUser.setPass(contr);
+			updatedUser.setRol(rol);
 	        
 	        RestTemplate restTemplate = new RestTemplate();
 	        restTemplate.put(UPDATE_USER, updatedUser, params);

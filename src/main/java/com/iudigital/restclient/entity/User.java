@@ -7,6 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+
+
+
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -27,9 +31,12 @@ public class User {
 	private String foto;
 	@Column(nullable = false, columnDefinition = "TINYINT(1)")
 	private boolean reporte;
+	private String pass;
+	@Column(name = "rol_id")
+	private String rol;
 	
 	
-	public User(String cedula, String nombre, String apellido, int age, String telefono, String direccion, String barrio, String ciudad, String foto, boolean reporte) {
+	public User(String cedula, String nombre, String apellido, int age, String telefono, String direccion, String barrio, String ciudad, String foto, boolean reporte,String pass, String rol) {
 		
 		this.cedula = cedula;
 		this.nombre = nombre;
@@ -41,6 +48,8 @@ public class User {
 		this.ciudad = ciudad;
 		this.foto = foto;
 		this.reporte = reporte;
+		this.pass = pass;
+		this.rol = rol;
 		
 	}
 	
@@ -135,12 +144,30 @@ public class User {
 	public void setReporte(boolean reporte) {
 		this.reporte = reporte;
 	}
+	
+	public String getPass() {
+		return pass;
+	}
 
+	public void setPass(String pass) {
+		this.pass = pass;
+	}
+	
+	public String getRol() {
+		return rol;
+	}
+
+	public void setRol(String rol) {
+		this.rol = rol;
+	}
+
+	
 	@Override
 	public String toString() {
 		return "User [idUser=" + idUser + ", cedula=" + cedula + ", nombre=" + nombre + ", apellido=" + apellido
 				+ ", age=" + age + ", telefono=" + telefono + ", direccion=" + direccion + ", barrio=" + barrio
-				+ ", ciudad=" + ciudad + ", foto=" + foto + ", reporte=" + reporte + "]";
+				+ ", ciudad=" + ciudad + ", foto=" + foto + ", reporte=" + reporte + ", pass=" + pass + ", rol="
+				+ rol + "]";
 	}
 	
 	
