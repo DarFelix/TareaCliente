@@ -31,7 +31,7 @@ public class RestClient {
     private static final String UPDATE_USER = "http://localhost:8005/api/user/{id}";
     private static final String DELETE_USER = "http://localhost:8005/api/user/{id}";
 
-    static RestTemplate restTemplate = new RestTemplate();
+    private static final RestTemplate REST_TEMPLATE = new RestTemplate();
 
     public static void main(String[] args) throws Exception {
 
@@ -90,7 +90,7 @@ public class RestClient {
     private static void callGetUsers() throws ParseException, JsonProcessingException {
 
         try {
-        ResponseEntity<List<User>> response = restTemplate.exchange(
+        ResponseEntity<List<User>> response = REST_TEMPLATE.exchange(
                 GET_ALL_USERS,
                 HttpMethod.GET,
                 null,
@@ -138,8 +138,8 @@ public class RestClient {
         param.put("id", ide);
 
         try {
-        RestTemplate restTemplate = new RestTemplate();
-        User user = restTemplate.getForObject(GET_USER_BY_ID, User.class, param);
+        
+        User user = REST_TEMPLATE.getForObject(GET_USER_BY_ID, User.class, param);
 
         System.out.println("Datos del usuario");
         System.out.println("Cedula: " + user.getCedula());
@@ -255,9 +255,9 @@ public class RestClient {
 
         try{
         
-        ResponseEntity<User> user2 = restTemplate.postForEntity(CREATE_USER, user, User.class);
+        ResponseEntity<Void> user2 = REST_TEMPLATE.postForEntity(CREATE_USER, user, Void.class);
 
-        System.out.println(user2.getBody());
+        System.out.println(user2.getStatusCode());
         System.out.println("Usuario guardado con éxito");
         } catch (Exception e) {
             escribirMensajeError(e); // replicar en los demas
@@ -365,8 +365,8 @@ public class RestClient {
         updatedUser.setRol(rol);
 
         try {
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.put(UPDATE_USER, updatedUser, params);
+        
+        REST_TEMPLATE.put(UPDATE_USER, updatedUser, params);
 
         System.out.println("Usuario actualizado con éxito");
         } catch (Exception e) {
@@ -382,11 +382,11 @@ public class RestClient {
         System.out.println("El id es: " + ide);
         System.out.println("--------------- ");
 
-        Map< String, Integer> params = new HashMap< String, Integer>();
+        Map<String, Integer> params = new HashMap<>();
         params.put("id", ide);
         try {
-            RestTemplate restTemplate = new RestTemplate();
-            restTemplate.delete(DELETE_USER, params);
+            
+            REST_TEMPLATE.delete(DELETE_USER, params);
 
             System.out.println("Usuario borrado con éxito");
         } catch (Exception e) {
